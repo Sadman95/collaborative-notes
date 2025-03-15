@@ -1,0 +1,22 @@
+{
+  "name": "collaborative-notes",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "dev": "lerna run dev --parallel",
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "clean": "lerna run clean",
+    "bootstrap": "lerna bootstrap"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "lerna": "^8.1.2",
+    "typescript": "^5.3.3"
+  }
+}
