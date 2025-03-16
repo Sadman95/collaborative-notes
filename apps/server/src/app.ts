@@ -15,6 +15,10 @@ const yamlFilePath = path.join(__dirname, '../swagger.yaml')
 const swaggerDocument = YAML.load(yamlFilePath)
 
 //health
+app.get('/', (_req: Request, res: Response) => {
+  res.redirect('/health')
+})
+//health
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
     health: 'OK',
