@@ -8,7 +8,6 @@ const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
     success: false,
     message: 'Resource not found',
   })
-  next()
 }
 
 export default notFoundHandler
