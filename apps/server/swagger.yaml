@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  title: 'Collaborative Notes API'
+  description: 'This is API specification specially designed for building & testing API'
+  contact:
+    name: Sadman Sakib
+    email: sakibsadman10@gmail.com
+  version: 1.0.0
+servers:
+  - description: Dev - v1
+    url: http://localhost:4000/api/v1
+tags:
+  - name: Auth
+    description: Authentication endpoints
+
+
+paths:
+  # Auth
+  /auth/signup:
+    post:
+      tags: [Auth]
+      summary: Sign up(public)
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SignupDTO'
+      responses:
+        201:
+          $ref: '#/components/responses/SignupResponse'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login to account(public)
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/LoginDTO'
+      responses:
+        200:
+          $ref: '#/components/responses/LoginResponse'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+  /auth/logout:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Auth]
+      summary: Logout
+      responses:
+        200:
+          description: Logout success response
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    allOf:
+                      - $ref: '#/components/schemas/StatusCodeSchema'
+                      - example: 200
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logout successful
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+  /auth/refreshToken:
+    get:
+      security:
+        - cookieAuth: []
+      tags: [Auth]
+      summary: Refresh token
+      responses:
+        200:
+          description: Refresh token success response
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    allOf:
+                      - $ref: '#/components/schemas/StatusCodeSchema'
+                      - example: 200
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Login successfull
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+    
+  
+  
+components:
+  schemas:
+    StatusCodeSchema:
+      type: integer
+      format: int32
+    SignupDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          example: Pass12345
+      required: [name, email, password]
+    LoginDTO:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          example: password1234
+      required:
+        - email
+        - password
+    TimeStampSchema:
+      required:
+        - createdAt
+        - updatedAt
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+    Pagination:
+      required:
+        - limit
+        - page
+        - totalItems
+        - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          example: 2
+        limit:
+          type: integer
+          format: int32
+          example: 10
+        next:
+          type: integer
+          format: int32
+          example: 3
+        prev:
+          type: integer
+          format: int32
+          example: 1
+        totalPages:
+          type: integer
+          format: int32
+          example: 5
+        totalItems:
+          type: integer
+          format: int32
+          example: 50
+    
+  responses:
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 400
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Bad request
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 401
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: You aren't authorized
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 403
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Forbidden access
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 404
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Resource not found
+    '406':
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 406
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Not Acceptable
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 409
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Requested resource already exists
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCdoe:
+                type: integer
+                format: int32
+                example: 500
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Something went wrong
+    SignupResponse:
+      description: Sign-up success response
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                allOf:
+                  - $ref: '#/components/schemas/StatusCodeSchema'
+                  - example: 201
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Account created successfully
+              links:
+                type: object
+                properties:
+                  login:
+                    type: string
+                    format: url
+                    example: '/auth/login'
+    LoginResponse:
+      description: Login success response
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                allOf:
+                  - $ref: '#/components/schemas/StatusCodeSchema'
+                  - example: 200
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Login successfull
+              data:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  refresh_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+              links:
+                type: object
+                properties:
+                  home:
+                    type: string
+                    format: url
+                    example: '/'
+    DeleteResponse:
+      description: Delete response
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                format: int32
+                example: 204
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Item deleted successfully
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Enter page number
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+        example: 2
+    limitParam:
+      name: limit
+      in: query
+      description: Enter limit
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+        example: 10
+    sortByParam:
+      name: sortBy
+      in: query
+      description: Enter sort key
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        example: updatedAt
+    sortOrderParam:
+      name: sortOrder
+      in: query
+      description: Enter sort order
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        example: desc
+        enum:
+          - asc
+          - desc
+    searchParam:
+      name: searchTerm
+      in: query
+      description: Enter search term
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        example: title
+    idPathParam:
+      name: id
+      in: path
+      description: Item id
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refresh_token
