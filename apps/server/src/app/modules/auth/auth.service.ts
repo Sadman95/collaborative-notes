@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import { Secret } from "jsonwebtoken";
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 import ApiError from "../../../errors/ApiError";
 import { JwtHelpers } from "../../../helpers/jwtHelpers";
 import { User } from "../user/user.model";
@@ -129,7 +129,7 @@ const refreshTokenService = async (
 ==========================
 */
 const logoutService = async (
-	id: string
+	id: ObjectId
 ): Promise<void> => {
 
 	const isUserExist = await User.isUserExists({ _id: id });

@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import app from './app'
 import config from './config'
 import { logger } from './shared/logger'
+import socket from './lib/socket'
 
 //handle Uncaught exceptions
 process.on('uncaughtException', error => {
@@ -25,6 +26,7 @@ async function bootsrap() {
       // )
       console.log(`App server listening on port ${config.port}`)
     })
+    socket(server)
   } catch (e) {
     logger.error(e)
     console.error(e)

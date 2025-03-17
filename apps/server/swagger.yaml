@@ -12,7 +12,8 @@ servers:
 tags:
   - name: Auth
     description: Authentication endpoints
-
+  - name: Notes
+    description: Notes endpoints
 
 paths:
   # Auth
@@ -88,15 +89,102 @@ paths:
           $ref: '#/components/responses/409'
         500:
           $ref: '#/components/responses/500'
-  /auth/refreshToken:
+  
+  # Notes
+  /notes:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create new note
+      description: create new note
+      tags: [Notes]
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/CreateNoteDTO'
+      responses:
+        201:
+          description: Created new order
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    allOf:
+                      - $ref: '#/components/schemas/StatusCodeSchema'
+                      - example: 201
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Note created successfully
+                  links:
+                    type: object
+                    properties:
+                      home:
+                        type: string
+                        format: url
+                        example: '/'
+                      
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
     get:
       security:
-        - cookieAuth: []
-      tags: [Auth]
-      summary: Refresh token
+        - bearerAuth: []
+      summary: Get notes
+      description: Fetch all notes
+      tags: [Notes]
       responses:
         200:
-          description: Refresh token success response
+          description: Get all notes response
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    allOf:
+                      - $ref: '#/components/schemas/StatusCodeSchema'
+                      - example: 200
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/NoteSchema'
+                      
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /notes/{id}:
+    patch:
+      security:
+        - bearerAuth: []
+      summary: Update note
+      description: Update note
+      tags: [Notes]
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UpdteNoteDTO'
+      responses:
+        200:
+          description: Update note response
           content:
             'application/json':
               schema:
@@ -111,18 +199,39 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: Login successfull
+                    example: Note updated successfully
+                  data:
+                    $ref: '#/components/schemas/NoteSchema'
+                  links:
+                    type: object
+                    properties:
+                      home:
+                        type: string
+                        format: url
+                        example: '/'
+                      
         400:
           $ref: '#/components/responses/400'
         404:
           $ref: '#/components/responses/404'
-        409:
-          $ref: '#/components/responses/409'
         500:
           $ref: '#/components/responses/500'
-    
-  
-  
+    delete:
+      security:
+        - bearerAuth: []
+      summary: Delete note
+      description: Delete note
+      tags: [Notes]
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      responses:
+        200:
+          $ref: '#/components/responses/DeleteResponse'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
 components:
   schemas:
     StatusCodeSchema:
@@ -201,7 +310,61 @@ components:
           type: integer
           format: int32
           example: 50
-    
+    NoteSchema:
+      type: object
+      required:
+        - title
+        - content
+        - author
+      properties:
+        _id:
+          type: string
+          format: uuid
+          description: Unique identifier for the note
+          example: "65b77a5c2e4d4a6b98e5f12f"
+        title:
+          type: string
+          description: Title of the note
+          example: "Meeting Notes"
+        content:
+          type: string
+          description: Content of the note
+          example: "Discuss project roadmap and deadlines."
+        author:
+          type: string
+          format: uuid
+          description: ID of the user who created the note
+          example: "65b77a5c2e4d4a6b98e5f130"
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the note was created
+          example: "2025-03-17T12:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the note was last updated
+          example: "2025-03-17T14:00:00Z"
+    CreateNoteDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Example title here'
+        content:
+          type: string
+          example: 'Example content here'
+      required: [title, content]
+    UpdteNoteDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Example title here'
+        content:
+          type: string
+          example: 'Example content here'
+      
   responses:
     '400':
       description: Bad request
@@ -379,6 +542,30 @@ components:
                     type: string
                     format: url
                     example: '/'
+    CreateNoteResponse:
+      description: Create note response
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                allOf:
+                  - $ref: '#/components/schemas/StatusCodeSchema'
+                  - example: 201
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Note created successfully
+              links:
+                type: object
+                properties:
+                  home:
+                    type: string
+                    format: url
+                    example: '/'
     DeleteResponse:
       description: Delete response
       content:
@@ -395,7 +582,7 @@ components:
                 example: true
               message:
                 type: string
-                example: Item deleted successfully
+                example: Note deleted successfully
   parameters:
     pageParam:
       name: page
@@ -455,7 +642,7 @@ components:
     idPathParam:
       name: id
       in: path
-      description: Item id
+      description: Note id
       required: true
       style: simple
       explode: false

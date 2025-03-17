@@ -29,9 +29,6 @@ const UserSchema = new Schema<IUserSchema, UserModel>(
 	},
 	{
 		timestamps: true,
-		toJSON: {
-			virtuals: true,
-		},
 	}
 );
 

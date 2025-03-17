@@ -1,7 +1,7 @@
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 
 export type IUserSchema = {
-	_id: string;
+	_id: ObjectId;
 	name: string;
 	email: string;
 	password: string;
@@ -11,7 +11,7 @@ export type IUserSchema = {
 //types for instance methods
 export type IUserMethods = {
 	isUserExists(obj: {
-		_id?: string;
+		_id?: ObjectId;
 		email?: string;
 	}): Promise<Partial<IUserSchema> | null>;
 	isPasswordMatch(
@@ -26,7 +26,7 @@ export type UserModel = {
 	 * Pick<type, properties we want to access(or)>
 	 * */
 	isUserExists(obj: {
-		_id?: string;
+		_id?: ObjectId;
 		email?: string;
 	}): Promise<Pick<
 		IUserSchema,

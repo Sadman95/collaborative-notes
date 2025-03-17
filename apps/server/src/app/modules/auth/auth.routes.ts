@@ -7,7 +7,7 @@ import checkAuth from "../../middlewares/checkAuth";
 
 const router: Router = express.Router();
 
-router.use(limiter(10, 10));
+router.use(limiter(10, 5));
 
 router
 	.post(
