@@ -3,6 +3,7 @@ import { NoteService } from "../app/modules/notes/notes.service";
 import { ICreateNotePayload } from "./../app/modules/notes/notes.interface";
 import { Server } from "http";
 
+
 /**
  * @summary Socket starter
  * @param {httpServer} server
@@ -11,7 +12,7 @@ const socket = (server: Server) => {
 	const io = require("socket.io")(server, {
 		cors: {
 			origin: "*", // Replace with your frontend URL
-			methods: ["GET", "POST", "DELETE", "PUT"],
+			methods: ["GET", "POST", "DELETE", "PATCH"],
 		},
 	});
 
@@ -24,34 +25,21 @@ const socket = (server: Server) => {
 			console.log("User disconnected: " + socket.id);
 		});
 
-		socket.on("join-note", async (noteId) => {
-			socket.join(noteId);
+		socket.on("join-note", (noteData) => {
+			socket.join(noteData._id);
 			if (!activeNote) {
-				const note = await NoteService.getNoteByIdService(noteId);
-				activeNote = note;
-				socket.emit("load-note", activeNote);
+				activeNote = noteData;
+				// socket.emit("load-note", activeNote);
 			}
 		});
 
-		socket.on(
-			"edit-note",
-			async (
-				noteId,
-				payload: Pick<ICreateNotePayload, "title" | "content">
-			) => {
-				const note = await NoteService.getNoteByIdService(noteId);
-				activeNote = note;
+		socket.on("edit-note", ({ currentUser, noteData }) => {
 
-				// Save to database
-				const updatedNote = await NoteService.updateNoteService(
-					payload,
-					noteId
-				);
-
-				// Notify everyone in the room
-				io.to(noteId).emit("update-note", updatedNote);
-			}
-		);
+			// Notify everyone in the room
+			socket.broadcast
+				.to(noteData._id)
+				.emit("editing-note", `${currentUser.name} is editing...`);
+		});
 	});
 };
 

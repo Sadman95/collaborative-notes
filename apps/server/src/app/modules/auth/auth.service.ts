@@ -63,12 +63,12 @@ const loginService = async (
 	const { _id: userId } = isExist;
 	
 	const accessToken = JwtHelpers.generateJwtToken(
-		{ userId },
+		{ userId, name: isExist.name, email: isExist.email },
 		config.jwt.jwt_secret as Secret,
 		config.jwt.jwt_expires_in as string
-	);
+	) as string;
 	const refreshToken = JwtHelpers.generateJwtToken(
-		{ userId },
+		{ userId, name: isExist.name, email: isExist.email },
 		config.jwt.jwt_refresh_secret as Secret,
 		config.jwt.jwt_refresh_expires_in as string
 	);
@@ -111,7 +111,7 @@ const refreshTokenService = async (
 
 	//generate new access token
 	const newAccessToken = JwtHelpers.generateJwtToken(
-		{ userId: isUserExist._id },
+		{ userId: isUserExist._id, name: isUserExist.name, email: isUserExist.email },
 		config.jwt.jwt_secret as Secret,
 		config.jwt.jwt_expires_in as string
 	);

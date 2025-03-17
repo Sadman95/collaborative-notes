@@ -37,16 +37,16 @@ const createNoteService = async (
 ==========================
 */
 const getNotesService = async (
-	authorId: ObjectId
+	userId: ObjectId
 ): Promise<Record<string, any>[] | null> => {
 	//check if user exists or not
-	const isExist = await User.isUserExists({ _id: authorId });
+	const isExist = await User.isUserExists({ _id: userId });
 
 	if (!isExist) {
 		throw new ApiError(httpStatus.NOT_FOUND, "User does not exist");
 	}
 
-	return await Notes.find({}, {"__v": 0}).sort({ updatedAt: -1 }).lean()
+	return await Notes.find({}, {"__v": 0}).populate('author', 'name email -_id').sort({ updatedAt: -1 }).lean()
 };
 
 /*
@@ -87,7 +87,6 @@ const updateNoteService = async (
 
 	return await Notes.findByIdAndUpdate({ _id: noteId }, payload, {
 		new: true,
-		runValidators: true,
 		projection: { __v: 0 },
 	});
 };

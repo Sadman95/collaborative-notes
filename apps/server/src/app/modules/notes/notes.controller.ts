@@ -59,11 +59,10 @@ const getNotesController = catchAsync(async (req: Request, res: Response) => {
 */
 const updateNoteController = catchAsync(async (req: Request, res: Response) => {
 	const { ...payload } = req.body;
-	const { userId } = req.user as JwtPayload;
 	const { id } = req.params;
 
 	const updatedNote = await NoteService.updateNoteService(
-		{ ...payload, author: userId },
+		payload,
 		id
 	);
 

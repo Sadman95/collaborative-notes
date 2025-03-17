@@ -6,6 +6,7 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { IUserSchema } from "./user.interface";
 import { UserService } from "./user.service";
+import mongoose from "mongoose";
 
 /*
  * Controller
@@ -27,7 +28,7 @@ const getSingleUserController = catchAsync(
 			throw new ApiError(httpStatus.UNAUTHORIZED, "Unauthorized access");
 		}
 
-		const result = await UserService.getSingleUserService(id);
+		const result = await UserService.getSingleUserService(new mongoose.Schema.ObjectId(id));
 
 		result &&
 			sendResponse<IUserSchema>(res, {

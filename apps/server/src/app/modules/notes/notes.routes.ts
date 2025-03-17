@@ -7,7 +7,6 @@ import { NotesValidation } from "./notes.validation";
 
 const router: Router = express.Router();
 
-router.use(limiter(10, 5));
 
 router
 	.route("/")
